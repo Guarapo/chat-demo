@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import UserList from './UserList';
 import SendbirdChat from '@sendbird/chat';
 import { SENDBIRD_INFO } from '../constants/constants';
-import { OpenChannelModule } from '@sendbird/chat/openChannel';
-import { createChannel, generateChannelName, loadChannels, loadMessages, sendMessage } from '../utils/channelUtils';
+import { createChannel, debounce, generateChannelName, loadChannels, loadMessages, sendMessage } from '../utils/channelUtils';
 import { GroupChannelModule } from '@sendbird/chat/groupChannel';
+import UploadModalButton from './UploadModalButton';
 
 const USERS = [
   { id: 'charly', name: 'Charly' },
@@ -14,25 +14,28 @@ const USERS = [
 
 const GamiChat = () => {
   const [activeUser, setActiveUser] = useState()
+  const [typing, setTyping] = useState(false);
   const [sb, setSb] = useState()
   const [channels, setChannels] = useState([])
   const [activeChannel, setActiveChannel] = useState([])
   const [activeMessages, setActiveMessages] = useState([])
-  const [messageCollection, setMessageCollection] = useState()
+  const [, setMessageCollection] = useState()
   const [selectedUser, setSelectedUser] = useState()
   const inputRef = useRef();
   const messagesBoxRef = useRef();
 
   //need to access state in message received callback
   const activeMessagesRef = useRef();
+  const activeChannelsRef = useRef();
   activeMessagesRef.current = activeMessages;
+  activeChannelsRef.current = activeChannel;
 
   useEffect(() => {
     if (!messagesBoxRef.current) return;
     messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
   }, [activeMessages])
 
-  console.log(channels)
+  console.log(activeMessages)
 
   const selectActiveUser = async (user) => {
     // reset messages
@@ -60,7 +63,7 @@ const GamiChat = () => {
     }
 
     // get list of channels
-    const channels = await loadChannels(sendbirdChat);
+    const channels = await loadChannels(sendbirdChat, channelHandlers);
     setChannels(channels);
 
     // set sendbird instance
@@ -106,10 +109,26 @@ const GamiChat = () => {
     if(!activeChannel) return;
     const message = inputRef.current.value;
     sendMessage(message, activeChannel);
+    inputRef.current.value = "";
   }
 
 
-  // disable chat without active user
+  // channel handler
+  const channelHandlers = {
+    onChannelsAdded: (context, channels) => {
+    },
+    onChannelsDeleted: (context, channels) => {
+    },
+    onChannelsUpdated: (context, channels) => {
+      if(activeChannelsRef.current){
+        const members = activeChannelsRef.current.getTypingUsers();
+        setTyping(!!members.length);
+      }
+    }
+  }
+
+
+  // message handlers for our channler
   const messageHandlers = {
     onMessagesAdded: (context, channel, messages) => {
       setActiveMessages([...activeMessagesRef.current , messages[0]])
@@ -151,9 +170,19 @@ const GamiChat = () => {
           <small>{new Date(message.createdAt).toLocaleString()}</small>
         </span>
         <br />
-        <span dangerouslySetInnerHTML={{ __html: message.message }} />
+        { message.customType === "image" ? <img src={message.message} alt="Bubble"/> : <span dangerouslySetInnerHTML={{ __html: message.message }} />}
       </p>
       </div>;
+  }
+
+  const endTyping = debounce(() => {
+    activeChannelsRef.current.endTyping();
+    console.log("entro aca finali")
+  }, 700)
+
+  const onMessageInputChange =  (event) => {
+    activeChannelsRef.current.startTyping();
+    endTyping();
   }
 
   return (
@@ -174,13 +203,16 @@ const GamiChat = () => {
             <div className="flex">
               <input
                 type="text"
+                onChange={onMessageInputChange}
                 className="w-full border border-gray-300 p-2 rounded-lg mr-2"
                 placeholder="Type your message..."
                 autoFocus
                 ref={inputRef}
               />
               <button onClick={sendMessageHandler} className="bg-blue-500 text-white rounded-lg px-4 py-2">Send</button>
+              <UploadModalButton sendMessage={sendMessage} activeChannel={activeChannel}/>
             </div>
+            { typing ? <div>Typing....</div> : null }
           </>
         ) : !activeUser ? renderInactiveUserState() : emptyState()
       }

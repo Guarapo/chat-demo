@@ -6,7 +6,12 @@
     "@sendbird/chat": "^4.2.3",
     "@uppy/aws-s3": "^3.6.0",
     "@uppy/core": "^3.8.0",
+    "@uppy/dashboard": "^3.7.1",
+    "@uppy/drag-drop": "^3.0.3",
+    "@uppy/file-input": "^3.0.4",
+    "@uppy/progress-bar": "^3.0.4",
     "@uppy/react": "^3.2.1",
+    "@uppy/transloadit": "^3.4.0",
     "moment": "^2.29.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -18,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -39,6 +45,8 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
     "tailwindcss": "^3.4.1"
   }
 }

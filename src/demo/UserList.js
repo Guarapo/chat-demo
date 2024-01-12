@@ -11,7 +11,6 @@ const UserList = ({ users, setActiveUser, activeUser, createOpenChannel, showUse
   const filteredListUser = activeUser ? users.filter(user => user !== activeUser) : users;
 
   const findChannel  = (channelId) => {
-    console.log(channelId)
     return channels.find(({url}) => channelId === url)
   }
 
@@ -23,7 +22,7 @@ const UserList = ({ users, setActiveUser, activeUser, createOpenChannel, showUse
       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
       {user.name}
       {currentChannel?.unreadMessageCount > 0 ?
-        <div className="rounded bg-green-300"> {currentChannel.unreadMessageCount}
+        <div className="ml-4 rounded-full bg-green-900 w-6 h-6 flex justify-center align-middle text-zinc-300 text-s"> {currentChannel.unreadMessageCount}
         </div> : null}
     </li>
   }

@@ -20,7 +20,7 @@ export const generateChannelName = (currentId, secondUserId) => {
 }
 
 // Helpful functions that call Sendbird
-export const loadChannels = async (sb) => {
+export const loadChannels = async (sb, channelHandlers) => {
     const groupChannelFilter = new GroupChannelFilter();
     groupChannelFilter.includeEmpty = true;
     groupChannelFilter.myMemberStateFilter = MyMemberStateFilter.ALL;
@@ -30,7 +30,7 @@ export const loadChannels = async (sb) => {
         order: GroupChannelListOrder.LATEST_LAST_MESSAGE,
     });
 
-    //collection.setGroupChannelCollectionHandler(channelHandlers);
+    collection.setGroupChannelCollectionHandler(channelHandlers);
 
     const channels = await collection.loadMore();
     return channels;
@@ -82,9 +82,10 @@ export const deleteMessage = async (currentlyJoinedChannel, messageToDelete) => 
     await currentlyJoinedChannel.deleteMessage(messageToDelete);
 }
 
-export const sendMessage = async (message, channel) => {
+export const sendMessage = async (message, channel, customType) => {
   const userMessageParams = {};
   userMessageParams.message = message;
+  userMessageParams.customType = customType;
   channel.sendUserMessage(userMessageParams)
     .onSucceeded((message) => {
       console.log("message sent", message)
@@ -93,4 +94,14 @@ export const sendMessage = async (message, channel) => {
       console.log(error)
       console.log("failed")
     });
+}
+
+export const debounce = (callback, wait) => {
+  let timeoutId = null;
+  return (...args) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback.apply(null, args);
+    }, wait);
+  };
 }
