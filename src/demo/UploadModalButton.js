@@ -13,26 +13,26 @@ const UploadModalButton = ({sendMessage, activeChannel}) => {
         waitForEncoding: true,
         assemblyOptions: {
           params: {
-            auth: { key: 'af6150c906df44059f41869c9ddaf762' },
-            template_id: '931a799d3d6e40a9beb4b7f1417cd1b1',
+            auth: { key: "af6150c906df44059f41869c9ddaf762" },
+            template_id: "931a799d3d6e40a9beb4b7f1417cd1b1",
           },
         },
-      })
+      });
 
-   uppy.current.on('transloadit:result', (stepName, result, assembly) => { 
+   uppy.current.on("transloadit:result", (stepName, result, assembly) => { 
     const url = result.ssl_url;
-    sendMessage(url, activeChannel, "image")
+    sendMessage(url, activeChannel, "image");
     handleClose();
    });
-  }, [activeChannel, sendMessage])
+  }, [activeChannel, sendMessage]);
 
   const handleOpen = () => {
-    setModalOpen(true)
-  }
+    setModalOpen(true);
+  };
 
   const handleClose = () => {
-    setModalOpen(false)
-  }
+    setModalOpen(false);
+  };
 
 
   return (
@@ -47,6 +47,6 @@ const UploadModalButton = ({sendMessage, activeChannel}) => {
       
     </div>
   );
-}
+};
 
 export default  UploadModalButton;

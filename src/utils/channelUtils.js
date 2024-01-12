@@ -13,11 +13,11 @@ export const createChannel = async (channelName, receptorId, sb) => {
     } catch (error) {
         console.log([null, error]);
     }
-}
+};
 
 export const generateChannelName = (currentId, secondUserId) => {
   return [currentId, secondUserId].toSorted().join("_");
-}
+};
 
 // Helpful functions that call Sendbird
 export const loadChannels = async (sb, channelHandlers) => {
@@ -34,7 +34,7 @@ export const loadChannels = async (sb, channelHandlers) => {
 
     const channels = await collection.loadMore();
     return channels;
-}
+};
 
 
 export const loadMessages = (channel, messageHandlers, onApiResult) => {
@@ -52,7 +52,7 @@ export const loadMessages = (channel, messageHandlers, onApiResult) => {
         // .onCacheResult(onApiResult)
         .onApiResult(onApiResult);
     return collection;
-}
+};
 
 
 export const deleteChannel = async (channelUrl, sb) => {
@@ -63,7 +63,7 @@ export const deleteChannel = async (channelUrl, sb) => {
     } catch (error) {
         return [null, error];
     }
-}
+};
 
 export const updateChannel = async (currentlyUpdatingChannel, channelNameInputValue, sb) => {
     try {
@@ -76,11 +76,11 @@ export const updateChannel = async (currentlyUpdatingChannel, channelNameInputVa
     } catch (error) {
         return [null, error];
     }
-}
+};
 
 export const deleteMessage = async (currentlyJoinedChannel, messageToDelete) => {
     await currentlyJoinedChannel.deleteMessage(messageToDelete);
-}
+};
 
 export const sendMessage = async (message, channel, customType) => {
   const userMessageParams = {};
@@ -88,13 +88,13 @@ export const sendMessage = async (message, channel, customType) => {
   userMessageParams.customType = customType;
   channel.sendUserMessage(userMessageParams)
     .onSucceeded((message) => {
-      console.log("message sent", message)
+      console.log("message sent", message);
     })
     .onFailed((error) => {
-      console.log(error)
-      console.log("failed")
+      console.log(error);
+      console.log("failed");
     });
-}
+};
 
 export const debounce = (callback, wait) => {
   let timeoutId = null;
@@ -104,4 +104,4 @@ export const debounce = (callback, wait) => {
       callback.apply(null, args);
     }, wait);
   };
-}
+};

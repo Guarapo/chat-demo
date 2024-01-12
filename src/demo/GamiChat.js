@@ -1,26 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
-import UserList from './UserList';
-import SendbirdChat from '@sendbird/chat';
-import { SENDBIRD_INFO } from '../constants/constants';
-import { createChannel, debounce, generateChannelName, loadChannels, loadMessages, sendMessage } from '../utils/channelUtils';
-import { GroupChannelModule } from '@sendbird/chat/groupChannel';
-import UploadModalButton from './UploadModalButton';
+import React, { useEffect, useRef, useState } from "react";
+import UserList from "./UserList";
+import SendbirdChat from "@sendbird/chat";
+import { SENDBIRD_INFO } from "../constants/constants";
+import { createChannel, debounce, generateChannelName, loadChannels, loadMessages, sendMessage } from "../utils/channelUtils";
+import { GroupChannelModule } from "@sendbird/chat/groupChannel";
+import UploadModalButton from "./UploadModalButton";
 
 const USERS = [
-  { id: 'charly', name: 'Charly' },
-  { id: 'doe', name: 'Jhon' },
-  { id: '01', name: 'Janeth' },
-]
+  { id: "charly", name: "Charly" },
+  { id: "doe", name: "Jhon" },
+  { id: "01", name: "Janeth" },
+];
 
 const GamiChat = () => {
-  const [activeUser, setActiveUser] = useState()
+  const [activeUser, setActiveUser] = useState();
   const [typing, setTyping] = useState(false);
-  const [sb, setSb] = useState()
-  const [channels, setChannels] = useState([])
-  const [activeChannel, setActiveChannel] = useState([])
-  const [activeMessages, setActiveMessages] = useState([])
-  const [, setMessageCollection] = useState()
-  const [selectedUser, setSelectedUser] = useState()
+  const [sb, setSb] = useState();
+  const [channels, setChannels] = useState([]);
+  const [activeChannel, setActiveChannel] = useState([]);
+  const [activeMessages, setActiveMessages] = useState([]);
+  const [, setMessageCollection] = useState();
+  const [selectedUser, setSelectedUser] = useState();
   const inputRef = useRef();
   const messagesBoxRef = useRef();
 
@@ -33,17 +33,17 @@ const GamiChat = () => {
   useEffect(() => {
     if (!messagesBoxRef.current) return;
     messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
-  }, [activeMessages])
+  }, [activeMessages]);
 
-  console.log(activeMessages)
+  console.log(activeMessages);
 
   const selectActiveUser = async (user) => {
     // reset messages
-    setActiveChannel()
-    setActiveMessages([])
+    setActiveChannel();
+    setActiveMessages([]);
     setSelectedUser();
-    setSb()
-    setChannels()
+    setSb();
+    setChannels();
 
     // Active user
     setActiveUser(user);
@@ -59,7 +59,7 @@ const GamiChat = () => {
       // connect active user
       await sendbirdChat.connect(user.id);
     } catch (e) {
-      console.log("error", e)
+      console.log("error", e);
     }
 
     // get list of channels
@@ -68,7 +68,7 @@ const GamiChat = () => {
 
     // set sendbird instance
     setSb(sendbirdChat);
-  }
+  };
 
   const createOpenChannel = async (userId) => {
     if(!activeUser) return;
@@ -83,7 +83,7 @@ const GamiChat = () => {
       setChannels([...channels, groupChannel]);
       setActiveChannel(groupChannel);
       const activeMessageCollection = await loadMessages(groupChannel, messageHandlers, (_, messages) => {
-        setActiveMessages(messages.reverse())
+        setActiveMessages(messages.reverse());
       });
       setMessageCollection(activeMessageCollection);
     }else{
@@ -94,44 +94,44 @@ const GamiChat = () => {
         if(channel.url === existinChannel.url) {
           existinChannel.unreadMessageCount = 0;
           return existinChannel;
-        };
+        }
         return channel;
-      }))
+      }));
       const activeMessageCollection = await loadMessages(existinChannel, messageHandlers, (_, messages) => {
-        setActiveMessages(messages.reverse())
+        setActiveMessages(messages.reverse());
       });
       setMessageCollection(activeMessageCollection);
     }
 
-  }
+  };
 
   const sendMessageHandler = () => {
     if(!activeChannel) return;
     const message = inputRef.current.value;
     sendMessage(message, activeChannel);
     inputRef.current.value = "";
-  }
+  };
 
 
   // channel handler
   const channelHandlers = {
-    onChannelsAdded: (context, channels) => {
+    onChannelsAdded: () => {
     },
-    onChannelsDeleted: (context, channels) => {
+    onChannelsDeleted: () => {
     },
-    onChannelsUpdated: (context, channels) => {
+    onChannelsUpdated: () => {
       if(activeChannelsRef.current){
         const members = activeChannelsRef.current.getTypingUsers();
         setTyping(!!members.length);
       }
     }
-  }
+  };
 
 
   // message handlers for our channler
   const messageHandlers = {
     onMessagesAdded: (context, channel, messages) => {
-      setActiveMessages([...activeMessagesRef.current , messages[0]])
+      setActiveMessages([...activeMessagesRef.current , messages[0]]);
     },
     onMessagesUpdated: (context, channel, messages) => {
     },
@@ -144,27 +144,27 @@ const GamiChat = () => {
     },
     onHugeGapDetected: () => {
     }
-  }
+  };
 
   const renderInactiveUserState = () => (
     <div className="w-full h-screen flex  items-center justify-center font-bold text-xl">
       <img src="User.png" alt="" />
       Select an active user from the sidebar!
     </div>
-  )
+  );
 
   const emptyState = () => (
     <div className="w-full h-screen flex  items-center justify-center font-bold text-xl">
       <img src="EmptyState.png" alt="" />
       Select a Channel from the sidebar to start chatting!
     </div>
-  )
+  );
 
   const renderMessage = (message) => {
     const isActiveUser = message.sender.userId === activeUser?.id;
 
     return <div className={`flex w-full my-4 ${isActiveUser ? "justify-start" : "justify-end"}`}>
-      <p key={message.reqId} className={`  message`}>
+      <p key={message.reqId} className={"  message"}>
         <span className="user-info">
           <strong>{message.sender.nickname}</strong>
           <small>{new Date(message.createdAt).toLocaleString()}</small>
@@ -173,17 +173,17 @@ const GamiChat = () => {
         { message.customType === "image" ? <img src={message.message} alt="Bubble"/> : <span dangerouslySetInnerHTML={{ __html: message.message }} />}
       </p>
       </div>;
-  }
+  };
 
   const endTyping = debounce(() => {
     activeChannelsRef.current.endTyping();
-    console.log("entro aca finali")
-  }, 700)
+    console.log("entro aca finali");
+  }, 700);
 
   const onMessageInputChange =  (event) => {
     activeChannelsRef.current.startTyping();
     endTyping();
-  }
+  };
 
   return (
     <div className="flex h-screen w-full">

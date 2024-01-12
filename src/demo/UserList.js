@@ -6,13 +6,13 @@ const UserList = ({ users, setActiveUser, activeUser, createOpenChannel, showUse
     const selectedUser = users.find(({id}) => userId === id);
     if (!selectedUser) return;
     setActiveUser(selectedUser);
-  }
+  };
 
   const filteredListUser = activeUser ? users.filter(user => user !== activeUser) : users;
 
   const findChannel  = (channelId) => {
-    return channels.find(({url}) => channelId === url)
-  }
+    return channels.find(({url}) => channelId === url);
+  };
 
   const renderUserRow = (user) => {
     const channelId = generateChannelName(user.id, activeUser.id);
@@ -24,8 +24,8 @@ const UserList = ({ users, setActiveUser, activeUser, createOpenChannel, showUse
       {currentChannel?.unreadMessageCount > 0 ?
         <div className="ml-4 rounded-full bg-green-900 w-6 h-6 flex justify-center align-middle text-zinc-300 text-s"> {currentChannel.unreadMessageCount}
         </div> : null}
-    </li>
-  }
+    </li>;
+  };
   return (
     <div className="w-1/4 bg-gray-200 p-4">
       <div className="my-4 flex">
@@ -47,6 +47,6 @@ const UserList = ({ users, setActiveUser, activeUser, createOpenChannel, showUse
       
     </div>
   );
-}
+};
 
 export default UserList;

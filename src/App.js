@@ -1,7 +1,7 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './Home';
-import GamiChat from './demo/GamiChat.js';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./Home";
+import GamiChat from "./demo/GamiChat.js";
 
 const App = () => {
   return (
@@ -12,6 +12,6 @@ const App = () => {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;
